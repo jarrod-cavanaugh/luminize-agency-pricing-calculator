@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luminize Pricing Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { min-height: 100vh; background: #0a0a14; font-family: 'Sora', sans-serif; padding: 40px 20px; display: flex; flex-direction: column; align-items: center; }
+  .label { font-size: 13px; letter-spacing: 4px; color: #00c2b8; margin-bottom: 8px; text-transform: uppercase; text-align: center; }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: #fff; letter-spacing: 2px; line-height: 1; text-align: center; }
+  .subtitle { color: rgba(255,255,255,0.4); font-size: 14px; margin-top: 8px; text-align: center; }
+  .tiers { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin: 32px 0; }
+  .tier { background: rgba(255,255,255,0.04); border-radius: 8px; padding: 10px 16px; text-align: center; }
+  .tier-label { font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+  .tier-rate { font-size: 18px; font-weight: 700; }
+  .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 32px; width: 100%; max-width: 480px; }
+  .field-label { display: block; font-size: 12px; letter-spacing: 2px; color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 8px; }
+  .input-wrap { position: relative; margin-bottom: 24px; }
+  .dollar { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #00c2b8; font-weight: 600; font-size: 16px; }
+  input[type="text"] { width: 100%; background: rgba(0,194,184,0.06); border: 1px solid rgba(0,194,184,0.3); border-radius: 8px; padding: 14px 14px 14px 32px; color: #fff; font-size: 16px; outline: none; font-family: 'Sora', sans-serif; }
+  input[type="text"]::placeholder { color: rgba(255,255,255,0.2); }
+  input[type="range"] { width: 100%; accent-color: #00c2b8; cursor: pointer; }
+  .range-labels { display: flex; justify-content: space-between; font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 4px; }
+  .divider { height: 1px; background: rgba(255,255,255,0.06); margin: 24px 0; }
+  .row { display: flex; justify-content: space-between; margin-bottom: 12px; }
+  .row-label { color: rgba(255,255,255,0.4); font-size: 13px; }
+  .row-value { color: #fff; font-size: 13px; }
+  .result-box { border-radius: 10px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .result-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 4px; }
+  .result-amount { font-size: 32px; font-weight: 700; }
+  .result-period { font-size: 16px; color: rgba(255,255,255,0.4); }
+  .result-annual-label { font-size: 11px; color: rgba(255,255,255,0.3); margin-bottom: 4px; }
+  .result-annual { font-size: 18px; font-weight: 600; color: rgba(255,255,255,0.6); }
+  .note { font-size: 11px; color: rgba(255,255,255,0.3); text-align: center; margin-top: 10px; }
+  .placeholder { text-align: center; color: rgba(255,255,255,0.2); font-size: 14px; padding: 20px 0; }
+  .custom { text-align: center; padding: 20px 0; }
+  .custom-title { font-size: 28px; font-weight: 700; color: #7c3aed; }
+  .custom-sub { font-size: 13px; color: rgba(255,255,255,0.4); margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<div class="label">Luminize</div>
+<h1>Pricing Calculator</h1>
+<p class="subtitle">Agency rate estimator · $15k/mo minimum</p>
+
+<div class="tiers">
+  <div class="tier" style="border: 1px solid rgba(0,194,184,0.2)">
+    <div class="tier-label">$3M – $10M</div>
+    <div class="tier-rate" style="color:#00c2b8">5.0%</div>
+  </div>
+  <div class="tier" style="border: 1px solid rgba(124,58,237,0.2)">
+    <div class="tier-label">$10M – $25M</div>
+    <div class="tier-rate" style="color:#7c3aed">4.5%</div>
+  </div>
+  <div class="tier" style="border: 1px solid rgba(0,194,184,0.2)">
+    <div class="tier-label">$25M – $50M</div>
+    <div class="tier-rate" style="color:#00c2b8">4.0%</div>
+  </div>
+  <div class="tier" style="border: 1px solid rgba(124,58,237,0.2)">
+    <div class="tier-label">$50M+</div>
+    <div class="tier-rate" style="color:#7c3aed">Custom</div>
+  </div>
+</div>
+
+<div class="card">
+  <label class="field-label">Annual Amazon Revenue</label>
+  <div class="input-wrap">
+    <span class="dollar">$</span>
+    <input type="text" id="revenue" placeholder="e.g. 5,000,000" oninput="calculate()">
+  </div>
+
+  <label class="field-label">Rate Adjustment: <span id="adj-label" style="color:#00c2b8">+0.0%</span></label>
+  <input type="range" id="adjustment" min="-1" max="1" step="0.1" value="0" oninput="calculate()">
+  <div class="range-labels">
+    <span>-1% (discount)</span><span>standard</span><span>+1% (premium)</span>
+  </div>
+
+  <div class="divider"></div>
+  <div id="result"><div class="placeholder">Enter a revenue figure to see pricing</div></div>
+</div>
+
+<script>
+  function calculate() {
+    const raw = document.getElementById('revenue').value.replace(/,/g, '');
+    const annual = parseFloat(raw) || 0;
+    const adj = parseFloat(document.getElementById('adjustment').value);
+    const adjLabel = document.getElementById('adj-label');
+    adjLabel.textContent = (adj >= 0 ? '+' : '') + adj.toFixed(1) + '%';
+    adjLabel.style.color = adj >= 0 ? '#00c2b8' : '#f87171';
+
+    const result = document.getElementById('result');
+    const MINIMUM = 15000;
+
+    if (!annual) {
+      result.innerHTML = '<div class="placeholder">Enter a revenue figure to see pricing</div>';
+      return;
+    }
+
+    if (annual >= 50000000) {
+      result.innerHTML = '<div class="custom"><div class="custom-title">Custom Pricing</div><div class="custom-sub">$50M+ brands are priced individually</div></div>';
+      return;
+    }
+
+    let base;
+    if (annual < 3000000) base = 5.0;
+    else if (annual < 10000000) base = 5.0;
+    else if (annual < 25000000) base = 4.5;
+    else base = 4.0;
+
+    const rate = Math.min(Math.max(base + adj, base - 1), base + 1);
+    const monthly = annual / 12;
+    const calcFee = monthly * (rate / 100);
+    const finalFee = Math.max(calcFee, MINIMUM);
+    const isMin = calcFee < MINIMUM;
+
+    const fmt = n => '$' + Math.round(n).toLocaleString();
+    const boxColor = isMin ? 'rgba(124,58,237,0.15)' : 'rgba(0,194,184,0.1)';
+    const boxBorder = isMin ? 'rgba(124,58,237,0.4)' : 'rgba(0,194,184,0.4)';
+    const amtColor = isMin ? '#a78bfa' : '#00c2b8';
+
+    result.innerHTML = `
+      <div class="row"><span class="row-label">Monthly Revenue</span><span class="row-value">${fmt(monthly)}</span></div>
+      <div class="row"><span class="row-label">Applied Rate</span><span class="row-value" style="color:#00c2b8;font-weight:600">${rate.toFixed(1)}%</span></div>
+      <div class="row"><span class="row-label">Calculated Fee</span><span class="row-value">${fmt(calcFee)}/mo</span></div>
+      <div class="result-box" style="background:${boxColor};border:1px solid ${boxBorder}">
+        <div>
+          <div class="result-title">${isMin ? 'Minimum Applied' : 'Monthly Fee'}</div>
+          <div class="result-amount" style="color:${amtColor}">${fmt(finalFee)}<span class="result-period">/mo</span></div>
+        </div>
+        <div style="text-align:right">
+          <div class="result-annual-label">Annual</div>
+          <div class="result-annual">${fmt(finalFee * 12)}</div>
+        </div>
+      </div>
+      ${isMin ? `<div class="note">Calculated fee of ${fmt(calcFee)}/mo is below the $15k minimum</div>` : ''}
+    `;
+  }
+</script>
+</body>
+</html>
